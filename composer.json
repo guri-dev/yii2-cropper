@@ -1,0 +1,22 @@
+{
+    "name": "punjabideveloper/yii2-Cropper",
+    "description": "Yii2 + Cropper integration extension",
+    "type": "yii2-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gurcharan Singh",
+            "email": "guri@connectthedoc.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+	"psr-4": {
+	    "fv\\yii\\cropper\\": "src/"
+	}
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "bower-asset/cropper": "^2.6"
+    }
+}
