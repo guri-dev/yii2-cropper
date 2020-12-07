@@ -39,7 +39,7 @@ class Form extends \yii\base\Model
 
 ```php
 $form->field($model, 'image')
-    ->widget(\fv\yii\croppie\Widget::class)
+    ->widget(\fv\yii\Cropper\Widget::class)
 ```
 
 
@@ -47,7 +47,7 @@ $form->field($model, 'image')
 
 ```php
 if ($app->request->isPost) {
-   $form->image = \fv\yii\croppie\UploadedFile::getInstance($form, 'image');
+   $form->image = \fv\yii\Cropper\UploadedFile::getInstance($form, 'image');
 
    if ($form->validate())
    {
@@ -75,7 +75,7 @@ name is generated.
 Issues
 ------
 
-See https://github.com/punjabideveloper/yii2-Cropper
+See https://github.com/punjabideveloper/yii2-cropper
 
 
 [Cropper]: https://github.com/fengyuanchen/cropperjs
