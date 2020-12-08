@@ -17,6 +17,6 @@
     },
     "require": {
         "php": ">=5.6.0",
-        "bower-asset/cropper": "*"
+        "bower-asset/cropperjs": "*"
     }
 }
