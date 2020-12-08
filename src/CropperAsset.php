@@ -4,7 +4,7 @@ namespace guri\yii\cropper;
 
 class CropperAsset extends \yii\web\AssetBundle
 {
-    public $sourcePath = '@bower/cropper';
+    public $sourcePath = '@bower/cropperjs';
 
     public $js = ['cropper.js'];
 

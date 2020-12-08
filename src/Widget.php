@@ -203,9 +203,6 @@ EOJS
     public function run()
     {
         Asset::register($this->view);
-        if (!empty($this->clientOptions['enableExif'])) {
-            ExifJsAsset::register($this->view);
-        }
 
         $tag = ArrayHelper::remove($this->options, 'tag', 'div');
 
