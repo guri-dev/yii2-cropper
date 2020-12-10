@@ -1,69 +1,90 @@
 (function($) {
     'use strict';
 
-    function updateData(ev, data, format, size, callback)
-    {
-	    var $el = $(ev.target);
-
-	    var $widget = $el
-	        .closest('.croppie-widget');
-
-	    var res = $widget
-	        .find('.croppie-widget__canvas')
-	        .croppie('result', {
-		        type: 'base64',
-                size: size,
-		        format: format,
-		        circle: false,
-	        })
-	        .then(function(data) {
-                var $input = $widget.find('.croppie-widget__data');
-		        $input.val(data);
-		        $el.val('');
-                if (callback) {
-                    callback($widget, $input);
-                };
-	        });
+    if( document.readyState !== 'loading' ) {
+        initWidget();
+    } else {
+        document.addEventListener('DOMContentLoaded', function () {
+            initWidget();
+        });
     }
 
-    window.croppieWidget = {
+    function initWidget() {
+        var image = document.getElementById('image');
+        var input = $('#imageupload-image');
+        var modal = $('#w0');
+        if(modal.length == 0) {
+            var modal = $('#w9-modal');
+        }
 
-	    onUploadChange: function(ev) {
+        var cropper;
 
-	        var el = ev.target;
+        input.on('change', function (e) {
+            var files = e.target.files;
+            var done = function (url) {
+                input.value = '';
+                image.src = url;
+                modal.modal('hide');
+                setTimeout(() => {
+                    modal.modal('show');
+                }, 500);
 
-	        if (!(el.files && el.files.length)) {
-		        alert('You need a recent browser to upload.');
-		        return;
-	        }
+            };
+            var reader;
+            var file;
+            var url;
 
-	        var fr = new FileReader();
+            if (files && files.length > 0) {
+                file = files[0];
 
-	        fr.onload = function(e) {
-		        var $el = $(el);
-		        $el
-		            .closest('.croppie-widget')
-		            .find('.croppie-widget__canvas')
-		            .croppie('bind', {
-                        url: e.target.result
-		            });
-	        }
+                if (URL) {
+                done(URL.createObjectURL(file));
+                } else if (FileReader) {
+                reader = new FileReader();
+                reader.onload = function (e) {
+                    done(reader.result);
+                };
+                reader.readAsDataURL(file);
+                }
+            }
 
-	        fr.readAsDataURL(el.files[0]);
-	    },
+        });
 
-	    updateData: updateData
+        modal.on('shown.bs.modal', function () {
+            cropper = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 3,
+            });
+            }).on('hidden.bs.modal', function () {
+                if(cropper !== undefined) {
+                   cropper.destroy();
+                }
+                cropper = null;
+            });
 
-    };
+        document.getElementById('crop').addEventListener('click', function () {
+        var canvas;
+        var dataURL;
+        modal.modal('hide');
 
-    $(function() {
-	    $(document).on('click', '[data-croppie-rotate-deg]', function() {
-	        var deg = parseFloat($(this).data('croppie-rotate-deg'));
-	        $(this)
-		        .closest('.croppie-widget')
-		        .find('.croppie-widget__canvas')
-		        .croppie('rotate', deg);
-	    });
-    });
+        if (cropper) {
+            canvas = cropper.getCroppedCanvas({
+                width: 160,
+                height: 160,
+                minWidth: 256,
+                minHeight: 256,
+                maxWidth: 4096,
+                maxHeight: 4096,
+                imageSmoothingQuality: 'high',
+            });
+
+            dataURL = canvas.toDataURL("image/png");
+
+            $('input:hidden[name="ImageUpload[image]"]').val(dataURL);
+            $('#upload-logo-form').submit();
+
+        }
+        });
+    }
 
 })(jQuery);

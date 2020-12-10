@@ -25,7 +25,7 @@ class Widget extends \yii\widgets\InputWidget
 
     public $rotateCwLabel;
 
-    public $layout = "{canvas}\n{upload}\n{rotate-cw}\n{rotate-ccw}";
+    public $layout = "{canvas}\n{upload}\n{rotate-cw}\n{rotate-ccw}\n{image}";
 
     public $size = 'viewport';
 
@@ -51,38 +51,6 @@ class Widget extends \yii\widgets\InputWidget
         if ($this->format === NULL) {
             $this->format = 'png';
         }
-
-        if (!isset($this->clientOptions['enableExif'])) {
-            $this->clientOptions['enableExif'] = true;
-        }
-
-        if (!isset($this->clientOptions['enableOrientation'])) {
-            $this->clientOptions['enableOrientation'] = true;
-        }
-
-        if (!isset($this->clientOptions['enableExif'])) {
-            $this->clientOptions['enableExif'] = true;
-        }
-
-        if (!isset($this->clientOptions['viewport'])) {
-            $this->clientOptions['viewport'] = [
-                'width' => 200,
-                'height' => 200,
-            ];
-        }
-
-        if (!isset($this->clientOptions['boundary'])) {
-            $this->clientOptions['boundary'] = $this->clientOptions['viewport'];
-        }
-
-        if ($this->rotateCcwLabel === NULL) {
-            $this->rotateCcwLabel = \Yii::t('app', 'Rotate counter-clockwise');
-        }
-
-        if ($this->rotateCwLabel === NULL) {
-            $this->rotateCwLabel = \Yii::t('app', 'Rotate clockwise');
-        }
-
     }
 
 
@@ -104,24 +72,6 @@ class Widget extends \yii\widgets\InputWidget
         } else {
             $callback = 'null';
         }
-
-        $this->view->registerJs(<<<EOJS
-jQuery('#{$id}')
-    .on('update.croppie',
-        function(ev, data) {
-			croppieWidget.updateData(ev, data, $format, $size, $callback);
-        })
-    .croppie($js_options);
-EOJS
-        );
-
-        if ($this->url) {
-            $url = Json::encode($this->url);
-            $this->view->registerJs(
-                "jQuery('#{$id}').croppie('bind', {url: $url})"
-            );
-        }
-
 
         return Html::tag('div', '', [
             'id' => $id,
@@ -151,31 +101,23 @@ EOJS
     }
 
 
-    protected function renderUploadButton()
+    protected function renderImage()
     {
-        $label = ArrayHelper::remove(
-            $this->uploadButtonOptions,
-            'label',
-            \Yii::t('app', 'Upload')
-        );
+        return Html::tag('img', '', [
+            'id' => 'image',
+            'src' => '',
+            'class' => ['cropper-hidden'],
+        ]);
+    }
+
+
+    protected function renderCustomJS()
+    {
+
 
         $this->view->registerJs(<<<EOJS
-jQuery('#{$this->id}-upload').on('change', croppieWidget.onUploadChange);
-EOJS
-        );
 
-        return Html::tag(
-            'label',
-            $label . ' ' . Html::fileInput(
-                $this->id . '__upload',
-                $label,
-                $this->uploadButtonOptions +
-                [
-                    'id' => $this->id . '-upload',
-                    'accept' => 'image/*',
-                ]
-            ),
-            ['class' => 'btn btn-primary btn-file']
+EOJS
         );
     }
 
@@ -186,12 +128,14 @@ EOJS
 
         if ($el === '{canvas}') {
             return $this->renderCanvas();
-        } elseif ($el === '{upload}') {
-            return $this->renderUploadButton();
+        } elseif ($el === '{custom-js}') {
+            return $this->renderCustomJS();
         } elseif ($el === '{rotate-cw}') {
             return $this->renderRotateCwButton();
         } elseif ($el === '{rotate-ccw}') {
             return $this->renderRotateCcwButton();
+        } elseif ($el === '{image}') {
+            return $this->renderImage();
         }
 
         \Yii::warning("Unknown layout element: $el", __METHOD__);
@@ -212,10 +156,10 @@ EOJS
             $this->layout
         );
 
-        return Html::tag(
-            $tag,
-            $out . parent::renderInputHtml('hidden'),
-            $this->containerOptions
-        );
+        // return Html::tag(
+        //     $tag,
+        //     $out . parent::renderInputHtml('hidden'),
+        //     $this->containerOptions
+        // );
     }
 }
