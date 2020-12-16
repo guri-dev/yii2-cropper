@@ -25,7 +25,6 @@
                 input.value = '';
                 image.src = url;
                 cropper = new Cropper(image, {
-                    aspectRatio: 16 / 9,
                     viewMode: 3,
                 });
 
