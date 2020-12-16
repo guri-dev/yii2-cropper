@@ -24,10 +24,10 @@
             var done = function (url) {
                 input.value = '';
                 image.src = url;
-                modal.modal('hide');
-                setTimeout(() => {
-                    modal.modal('show');
-                }, 500);
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    viewMode: 3,
+                });
 
             };
             var reader;
@@ -50,17 +50,16 @@
 
         });
 
-        modal.on('shown.bs.modal', function () {
-            cropper = new Cropper(image, {
-                aspectRatio: 1,
-                viewMode: 3,
-            });
-            }).on('hidden.bs.modal', function () {
-                if(cropper !== undefined) {
-                   cropper.destroy();
-                }
-                cropper = null;
-            });
+        modal.on('hidden.bs.modal', function () {
+            if(cropper !== undefined ) {
+               cropper.destroy();
+            }
+            $(this).find('#image').attr('src','');
+            $(this).find('#imageupload-image').val('');
+
+        });
+
+
 
         document.getElementById('crop').addEventListener('click', function () {
         var canvas;
@@ -69,12 +68,13 @@
 
         if (cropper) {
             canvas = cropper.getCroppedCanvas({
-                width: 160,
-                height: 160,
+                width: 260,
+                height: 260,
                 minWidth: 256,
                 minHeight: 256,
                 maxWidth: 4096,
                 maxHeight: 4096,
+                imageSmoothingEnabled: false,
                 imageSmoothingQuality: 'high',
             });
 

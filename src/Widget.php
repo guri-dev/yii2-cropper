@@ -80,6 +80,17 @@ class Widget extends \yii\widgets\InputWidget
     }
 
 
+    protected function renderButton()
+    {
+        return Html::tag('input', '', [
+            'id' => 'imageupload-image',
+            'type' => 'file',
+            'class' => ['form-control-file'],
+            'name' => ['ImageUpload[image]'],
+        ]);
+    }
+
+
     protected function renderRotateButton($label, $degrees)
     {
         return Html::button(
@@ -136,6 +147,8 @@ EOJS
             return $this->renderRotateCcwButton();
         } elseif ($el === '{image}') {
             return $this->renderImage();
+        } elseif ($el === '{button}') {
+            return $this->renderButton();
         }
 
         \Yii::warning("Unknown layout element: $el", __METHOD__);
