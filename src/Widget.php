@@ -126,7 +126,11 @@ class Widget extends \yii\widgets\InputWidget
         $this->view->registerCss(".cropper-view-box,
         .cropper-face {
           border-radius: 50%;
-        }");
+        }
+        .img-container img {
+            max-width: 100%;
+        }
+        ");
     }
 
     protected function renderCustomJS()
