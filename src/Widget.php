@@ -124,11 +124,17 @@ class Widget extends \yii\widgets\InputWidget
     protected function renderCustomCSS()
     {
         $this->view->registerCss(".cropper-view-box,
-        .cropper-face {
-          border-radius: 50%;
-        }
         .img-container img {
             max-width: 100%;
+        }
+        ");
+    }
+
+    protected function renderCustomCSSCircle()
+    {
+        $this->view->registerCss(".cropper-view-box,
+        .cropper-face {
+          border-radius: 50%;
         }
         ");
     }
@@ -148,6 +154,10 @@ class Widget extends \yii\widgets\InputWidget
                 initWidget();
             });
         }
+
+
+        var width;
+        var height;
 
         function initWidget() {
             var image = document.getElementById('image');
@@ -189,6 +199,11 @@ class Widget extends \yii\widgets\InputWidget
 
             });
 
+            image.addEventListener('crop', function (event) {
+                width = event.detail.width;
+                height = event.detail.height;
+            });
+
             modal.on('hidden.bs.modal', function () {
                 if(cropper !== undefined ) {
                    cropper.destroy();
@@ -205,8 +220,8 @@ class Widget extends \yii\widgets\InputWidget
 
             if (cropper) {
                 canvas = cropper.getCroppedCanvas({
-                    width: 260,
-                    height: 260,
+                    width: width,
+                    height: height,
                     minWidth: 256,
                     minHeight: 256,
                     maxWidth: 4096,
@@ -246,6 +261,8 @@ EOJS
             return $this->renderButton();
         } elseif ($el === '{custom-css}') {
             return $this->renderCustomCSS();
+        } elseif ($el === '{custom-css-circle}') {
+            return $this->renderCustomCSSCircle();
         }
 
         \Yii::warning("Unknown layout element: $el", __METHOD__);
