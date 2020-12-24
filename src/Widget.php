@@ -173,10 +173,9 @@ class Widget extends \yii\widgets\InputWidget
                 var files = e.target.files;
                 var done = function (url) {
                     input.value = '';
-                    if(cropper) {
+                    if(cropper !== undefined) {
                         cropper.destroy();
                     }
-                    cropper.destroy();
                     image.src = url;
                     cropper = new Cropper(image,
                         $js_options
